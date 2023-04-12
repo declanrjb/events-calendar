@@ -1,0 +1,33 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+
+library(lubridate)
+library(dplyr)
+library(tidyverse)
+
+#get data
+the_df <- read_csv("blotter.csv")
+colnames(the_df) <- c("case","full_date","time","description","location","date_time","notes","date")
+lead_df <- read_csv("lead.csv")
+
+#generate output
+cat(paste("# Community Safety Blotter \n\n", sep=""))
+cat(paste("## *", lead_df[1,]$lead, "*\n\n", sep=""))
+
+the_df[1,]$date -> first_date
+cat(paste("### ", the_df[1,]$date, sep=""))
+for(i in c(1:nrow(the_df))) {
+  cat("\n\n")
+#  message(the_df[i,]$date)
+  if(the_df[i,]$date != first_date) {
+    cat(paste("### ", the_df[i,]$date, sep=""))
+    first_date <- the_df[i,]$date
+  }
+  cat(paste("\n **", the_df[i,]$case, "**; **", the_df[i,]$description, "**; **", the_df[i,]$location, "**\n\n", the_df[i,]$notes, sep=""))
+}
+```
