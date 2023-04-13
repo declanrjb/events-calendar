@@ -10,8 +10,8 @@ date_range <- interval(start_date,end_date)
 year <- as.character(year(start_date))
 
 top_url <- paste("https://events.reed.edu/calendar/week/",date,"/?experience=&order=date",sep="")
-final_df <- as.data.frame(matrix(ncol=4,nrow=0))
-colnames(final_df) <- c("Url","Date","Title","Description")
+final_df <- as.data.frame(matrix(ncol=5,nrow=0))
+colnames(final_df) <- c("Url","Date","Title","Description","Location")
 
 while (!is.na(top_url)) {
 
@@ -19,8 +19,8 @@ while (!is.na(top_url)) {
   page <- read_html(top_url)
   url_list <- page %>% html_nodes(".em-card_title") %>% html_children() %>% html_attr("href")
   
-  result_df <- as.data.frame(matrix(ncol=4,nrow=0))
-  colnames(result_df) <- c("Url","Date","Title","Description")
+  result_df <- as.data.frame(matrix(ncol=5,nrow=0))
+  colnames(result_df) <- c("Url","Date","Title","Description","Location")
   
   for (i in 1:length(url_list)) {
     message(i)
@@ -31,12 +31,13 @@ while (!is.na(top_url)) {
     
     title <- page %>% html_nodes(".em-header-card_title") %>% html_text2()
     description <- page %>% html_nodes(".em-about_description") %>% html_text()
+    location <- page %>% html_nodes(".em-about_name") %>% html_text2()
     
     
     if (length(page %>% html_nodes(".em-list_dates__content"))) {
       dates_list <- page %>% html_nodes(".em-list_dates__content") %>% html_nodes("li") %>% html_text()
-      df <- as.data.frame(matrix(ncol=4,nrow=length(dates_list)))
-      colnames(df) <- c("Url","Date","Title","Description")
+      df <- as.data.frame(matrix(ncol=5,nrow=length(dates_list)))
+      colnames(df) <- c("Url","Date","Title","Description","Location")
       
       for (z in 1:length(dates_list)) {
         df[z,]$Date <- dates_list[z]
@@ -50,6 +51,7 @@ while (!is.na(top_url)) {
     df$Title <- title
     df$Description <- description
     df$Url <- url
+    df$Location <- location
     
     result_df <- rbind(result_df,df)
 

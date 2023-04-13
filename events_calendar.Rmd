@@ -12,7 +12,7 @@ library(tidyverse)
 
 #get data
 the_df <- read_csv("final_df.csv")
-colnames(the_df) <- c("url","pretty_date","title","description","data_date","date")
+colnames(the_df) <- c("url","pretty_date","title","description","location","data_date","date")
 
 #generate output
 
@@ -25,6 +25,6 @@ for(i in c(1:nrow(the_df))) {
     cat(paste("# ", the_df[i,]$date, sep=""))
     first_date <- the_df[i,]$date
   }
-  cat(paste("\n## ", the_df[i,]$title, "\n\n#### ", the_df[i,]$pretty_date, "\n\n", the_df[i,]$description, sep=""))
+  cat(paste("\n## ", the_df[i,]$title, "\n\n#### ", the_df[i,]$pretty_date, " @ ", the_df[i,]$location, "\n\n", the_df[i,]$description, sep=""))
 }
 ```
