@@ -21,7 +21,3 @@ lead <- page %>% html_nodes(".lead") %>% html_text()
 lead_df <- as.data.frame(matrix(ncol=1,nrow=1))
 colnames(lead_df) <- c("lead")
 lead_df$lead <- lead
-
-write.csv(df,"blotter.csv",row.names=FALSE)
-write.csv(lead_df,"lead.csv",row.names=FALSE)
-

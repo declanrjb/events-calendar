@@ -2,7 +2,7 @@ library(tidyverse)
 library(rvest)
 library(lubridate)
 
-date <- "2023/4/14" #set this to control output
+date <- "2023/9/8" #set this to control output. Specify start date
 
 start_date <- ymd(date)
 end_date <- ymd(date) + 6
@@ -31,8 +31,11 @@ while (!is.na(top_url)) {
     
     title <- page %>% html_nodes(".em-header-card_title") %>% html_text2()
     description <- page %>% html_nodes(".em-about_description") %>% html_text()
-    location <- page %>% html_nodes(".em-about_name") %>% html_text2()
-    
+    if (length(page %>% html_nodes(".em-about_name")) > 0) {
+      location <- page %>% html_nodes(".em-about_name") %>% html_text2()  
+    } else {
+      location <- NA
+    }
     
     if (length(page %>% html_nodes(".em-list_dates__content"))) {
       dates_list <- page %>% html_nodes(".em-list_dates__content") %>% html_nodes("li") %>% html_text()
@@ -75,9 +78,20 @@ while (!is.na(top_url)) {
 final_df <- unique(final_df)
 
 final_df <- cbind(final_df,Full_Date=NA)
+final_df <- cbind(final_df,Time=NA)
 for (i in 1:length(final_df$Date)) {
+  message(i)
   test_text <- final_df[i,]$Date
-  final_df[i,]$Full_Date <- as.character(mdy(substr(test_text,0,str_locate_all(pattern=year,test_text)[[1]][1,][2])))
+  if (grepl(year,test_text,fixed=TRUE)) {
+    final_df[i,]$Full_Date <- as.character(mdy(substr(test_text,0,str_locate_all(pattern=year,test_text)[[1]][1,][2])))
+    final_df[i,]$Time <- str_trim(substr(test_text,str_locate_all(pattern=year,test_text)[[1]][1,][2]+1,str_length(test_text)))
+  }
+  curr_desc <- final_df[i,]$Description
+  if (str_length(curr_desc) > 1500) {
+    curr_desc <- substr(curr_desc,0,1500)
+    curr_desc <- paste(curr_desc," [...]",sep="")
+    final_df[i,]$Description <- curr_desc
+  }
 }
 
 final_df <- final_df %>% arrange(Full_Date)
