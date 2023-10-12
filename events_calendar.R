@@ -2,7 +2,7 @@ library(tidyverse)
 library(rvest)
 library(lubridate)
 
-date <- "2023/9/8" #set this to control output. Specify start date
+date <- "2023/10/13" #set this to control output. Specify start date
 
 start_date <- ymd(date)
 end_date <- ymd(date) + 6

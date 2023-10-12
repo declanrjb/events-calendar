@@ -15,6 +15,7 @@ df <- getFullReports(url)
 df$Date <- date(df$Date_Time)
 df <- cbind(df,Human_Dates=NA)
 df$Human_Dates <- stamp("Friday, March 1, 1999")(df$Date)
+df$Notes <- str_squish(df$Notes)
 
 page <- read_html(url)
 lead <- page %>% html_nodes(".lead") %>% html_text()
